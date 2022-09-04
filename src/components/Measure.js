@@ -1,9 +1,8 @@
 import React from 'react';
 
 class Measure extends React.Component {
-    constructor(props){
-        super(props);
-
+    constructor(props) {
+      super(props);
         //LCM of 2,3,4,5,6,8,10,16,20,24,32,40,48 = 480, might need to add more digits to that tho
         this.state = {
             timeSignature: [ 4, 4 ],
@@ -11,34 +10,22 @@ class Measure extends React.Component {
             sharps: undefined,
             timeLeft: 480
         };
-        this.currentMeasure = this.currentMeasure.bind(this);
-    };
+      this.handleClick = this.handleClick.bind(this);
+    }
+  
+    handleClick() {
+      this.setState(prevState => ({
+        selected: !prevState.selected
+      }));
+    }
+  
+    render() {
+      return (
+        <button onClick={this.handleClick}>
+          {this.state.selected ? 'Selected' : 'Not'}
+        </button>
+      );
+    }
+  }
 
-    addNote(){
-        console.log('adding');
-    };
-
-    removeNote(){
-        console.log('removing')
-    };
-
-    highlightMeasure(){
-        console.log('current measure here!');
-    };
-
-    measureClicked(){
-        this.setState({working: true});
-    };
-
-    render(){
-        return(
-            <>
-            <div>
-                Measure
-            </div>
-            </>
-        )
-    };
-};
-
-export default Measure;
+  export default Measure;

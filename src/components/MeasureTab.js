@@ -1,43 +1,29 @@
 import React from 'react';
 
 class MeasureTab extends React.Component {
-    constructor(props){
-        super(props);
-
-        this.state = {
-            timeSignature: [ 4, 4 ],
-            flats: undefined,
-            sharps: undefined,
-            timeLeft: 480
+    constructor(props) {
+      super(props);
+      this.state = {
+          selected: false,
+          timeSignature: [ 4, 4 ],
+          timeLeft: 480
         };
-        this.currentMeasure = this.currentMeasure.bind(this);
-    };
+      this.handleClick = this.handleClick.bind(this);
+    }
+  
+    handleClick() {
+      this.setState(prevState => ({
+        selected: !prevState.selected
+      }));
+    }
+  
+    render() {
+      return (
+        <button onClick={this.handleClick}>
+          {this.state.selected ? 'Selected' : 'Not'}
+        </button>
+      );
+    }
+  }
 
-    addNote(){
-        console.log('adding');
-    };
-
-    removeNote(){
-        console.log('removing')
-    };
-
-    highlightMeasure(){
-        console.log('current measure here!');
-    };
-
-    measureClicked(){
-        this.setState({working: true});
-    };
-
-    render(){
-        return(
-            <>
-            <div>
-                Measure
-            </div>
-            </>
-        )
-    };
-};
-
-export default MeasureTab;
+  export default MeasureTab;
