@@ -3,14 +3,18 @@ import React from 'react';
 class Measure extends React.Component {
     constructor(props) {
       super(props);
-        //LCM of 2,3,4,5,6,8,10,16,20,24,32,40,48 = 480, might need to add more digits to that tho
+        //LCM of 2, 3, 5, 7, 11 is 2310
         this.state = {
             timeSignature: [ 4, 4 ],
             flats: undefined,
             sharps: undefined,
-            timeLeft: 480
+            timeLeft: 2310
         };
       this.handleClick = this.handleClick.bind(this);
+    }
+
+    keyboardController(selected) {
+      console.log(selected)
     }
   
     handleClick() {
