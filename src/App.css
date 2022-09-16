@@ -36,3 +36,19 @@
     transform: rotate(360deg);
   }
 }
+
+.selected{
+  background-color: blue;
+}
+
+.string{
+  color: red;
+  width: 100px;
+  height: 40px;
+  border: #282c34 solid 3px;
+  border-top: 0px;
+}
+
+.top{
+  border-top: #282c34 solid 3px;
+}
