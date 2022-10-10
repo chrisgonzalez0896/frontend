@@ -1,0 +1,12 @@
+.selected-measure{
+    background-color: blue;
+    padding-top: 10px;
+    padding-left: 10px;
+    width: 0.1vw;
+  }
+  
+  .unselected-measure{
+    padding-top: 10px;
+    padding-left: 10px;
+    width: 0.1vw;
+  }

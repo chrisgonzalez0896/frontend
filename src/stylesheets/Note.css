@@ -1,0 +1,17 @@
+.selectedString{
+    color: yellow;
+    background-color: gray;
+  }
+  
+  .string{
+    color: red;
+    width: 100px;
+    height: 40px;
+    border: #282c34 solid 3px;
+    border-top: 0px;
+  }
+
+  .top{
+    border-left: 0px;
+    border-right: 0px;
+  }

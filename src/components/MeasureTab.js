@@ -2,63 +2,56 @@ import React, {useRef, useState} from 'react';
 
 // const test = useRef();
 
-const [currentNoteInstance, setCurrentNoteInstance] = useState({});
-const [noteSelected, setNoteSelected] = useState({});
-const [currentPosition, setCurrentPosition] = useState({});
+//LCM of 2, 3, 4, 5, 6, 8, 10, 11, 12, 16, 20, 24, 28, 32, 48 is 36960
 
-class Note{
-  constructor(props){
-    super(props);
-    this.state = {
-      appearance: props.appearance,
-      connected: props.connected,
-      length: props.length,
-      position: props.position,
-      type: props.type
-    };
-    this.handleClick = this.handleClick.bind(this);
-    this.setNote = this.setNote.bind(this);
-  };
-
-  setNote(newNote){
-    let keys = Object.keys(newNote);
-    keys.length > 0 ? keys.forEach(el => { this.state[el] = newNote[el]} ) : null;
-  };
-
-  handleClick(){
-    setCurrentNoteInstance(this);
-    //setting the current note instance changes part of the UI that allows you to edit individual note
-  };
-}
-
-//LCM of 2, 3, 4, 5, 6, 8, 10, 11, 12, 16, 20, 24, 28, 32, 48 is 36,960
-
-class MeasureTab extends React.Component {
+class MeasureTab extends React.Component{
     constructor(props) {
+
       super(props);
+
       this.state = {
           selected: false,
           measureTime: 36960,
-          strings: [ {note: props.strings[7], selected: false, timeLeft: 36960, notes: []}, {note: props.strings[6], selected: false, timeLeft: 36960, notes: []},
-                    {note: props.strings[5], selected: false, timeLeft: 36960, notes: []}, {note: props.strings[4], selected: false, timeLeft: 36960, notes: []}, 
-                    {note: props.strings[3], selected: false, timeLeft: 36960, notes: []}, {note: props.strings[2], selected: false, timeLeft: 36960, notes: []},
-                    {note: props.strings[1], selected: false, timeLeft: 36960, notes: []}, {note: props.strings[0], selected: false, timeLeft: 36960, notes: []} ],
-          timeSignature: props.timeSignature
+          strings: props.strings,
+          timeSig: props.timeSig,
+          num: props.allMeasures.length
         };
-      this.handleClick = this.handleClick.bind(this);
-      this.display = <div className={this.state.selected ? 'selected' : null} onClick={this.handleClick}>
+
+      this.calculateTimeLeft = this.calculateTimeLeft.bind(this);  
+      this.handleClickMeasure = this.handleClickMeasure.bind(this);
+      this.handleClickString = this.handleClickString.bind(this);
+
+      this.setCurrentNoteInstance = props.setCurrentNoteInstance;
+      this.setCurrentPosition = props.setCurrentPosition;
+      this.setFirstClick = props.setFirstClick;
+
+      this.currentNoteInstance = props.currentNoteInstance;
+      this.currentPosition = props.currentPosition;
+      this.firstClick = props.firstClick;
+
+      this.display = <div className={(()=>{
+        let isSelected = false;
+        this.state.strings.forEach((string, index) => {
+          console.log(index, string)
+          if(string.selected === true) isSelected = true;
+        });
+        return isSelected;
+      })() ? 'selected-measure' : 'unselected-measure'} onClick={this.handleClickMeasure}>
         {this.state.strings.map((string, index) => {
-        return <div className={index === 0 ? 'string top' : 'string'}>{string.note}</div>
+
+        if(string.note === undefined) return;
+  
+        return <div className={`${index === 0 ? 'string top' : 'string'} ${string.selected ? 'selectedString' : null}`} onClick={this.handleClickString} >{string.note}</div>
       })}</div>
     }
 
-    addNote(){
+    addNote(propsPosition, propsType){
       let defaultNote = {
         appearance: 'quarter',
         connected: [],
         length: 9240,
-        position: props.position,
-        type: props.type
+        position: propsPosition,
+        type: propsType
       };
     };
 
@@ -73,11 +66,17 @@ class MeasureTab extends React.Component {
     calculateTimeLeft(){
       this.state.strings.forEach(el => {
         let total = 0;
-        el.notes.length > 0 ? () => {el.notes.forEach(innerEl => {
+        // function calc(){
+        //   el.notes.forEach(innerEl => {
+        //   total += innerEl.length;
+        //   });
+        // }
+        let newTimeLeft = this.state.measureTime - total;
+        el.timeLeft = (newTimeLeft > 0 ? newTimeLeft : 0);
+        if(el.notes.length > 0) el.notes.forEach(innerEl => {
           total += innerEl.length;
         });
-        let newTimeLeft = measureTime - total;
-        el.timeLeft = (newTimeLeft > 0 ? newTimeLeft : 0)} : null;
+        // el.notes.length > 0 ? calc() : null;
       });
     };
 
@@ -90,8 +89,32 @@ class MeasureTab extends React.Component {
       : window.removeEventListener('keydown', this.controls, false);
       
     };
+
+    handleClickString(e) {
+      e.preventDefault();
+      console.log('currentPosition: ', this.currentPosition)
+      if(Object.keys(this.currentPosition).length > 0) console.log('currentPosition: ', this.currentPosition)
+      this.setCurrentPosition({
+        measure: this.state.num,
+        string: this.state.strings[e.target.key - 1],
+        subdiv: 0
+      });
+      this.state.strings.forEach(string => {
+        /*
+          need to alter this to be able to work with a guitar tuning that has two strings tuned to the exact same note
+        */
+        string.note === e.target.firstChild.wholeText ? string.selected = true : string.selected = false;
+      });
+      // e.target.classList.add('selectedString');
+      // console.log('string: ', e.target.firstChild.wholeText)
+      console.log('currentPosition: ', this.currentPosition)
+    }
   
-    handleClick() {
+    handleClickMeasure() {
+      /*
+        will need to check to see if this is the same measure as previous, if it is then do nothing, but if it isn't then go through all other measures and make sure
+        to remove 'stringSelected' from the classes of all of their string elements 
+      */
       const currentStrings = this.state.strings;
       /* 
         need to set current position here, have it figure out what position person is most likeyl trying to click, if they don't have a previous note selected, go to
@@ -99,23 +122,51 @@ class MeasureTab extends React.Component {
         same measure as the one we just clicked, then we go to the next space of the same subdivision as the last note (if the last note is an eighth-note triplet, then
         the default next note on click will be spaced an eithth-note triplet away)
       */
-      console.log('this is measuretab')
       this.setState(prevState => ({
         selected: !prevState.selected
       }));
-      this.display = <div className={this.state.selected ? 'selected' : null} onClick={this.handleClick}>
+      // const newState = this.state;
+      // newState.selected = !newState.selected;
+      // this.state = newState;
+
+      // function isFirstClick(currentThis){
+      //   currentThis.setFirstClick(false);
+      //   currentThis.firstClick = false;
+      //   return {selected: true}
+      // }
+
+      // const currentState = this.firstClick ? isFirstClick(this) : this.state;
+
+
+      // this.display = <div>{this.state.strings.map(el => {
+      //   return el.timeLeft;
+      // })}</div>
+      console.log('selected: ', this.state.selected)
+      this.display = <div className={(()=>{
+        let isSelected = false;
+        this.state.strings.forEach((string, index) => {
+          console.log(index, string)
+          if(string.selected === true) isSelected = true;
+        });
+        return isSelected;
+      })() ? 'selected-measure' : 'unselected-measure'} onClick={this.handleClickMeasure}>
       {this.state.strings.map((string, index) => {
-      return <div className={index === 0 ? 'string top' : 'string'}>{string.note}</div>
+
+      if(string.note === undefined) return;
+
+      return <div  key={string.number} className={`${index === 0 ? 'string top' : 'string'} ${string.selected ? 'selectedString' : null}`} onClick={this.handleClickString}>{string.note}</div>
     })}</div>
     this.keyboardController(this.state.selected)
     if(!this.state.selected) window.removeEventListener('keydown', ()=>{console.log('removed')}, false)
-    };
+    
+    console.log('measure')
+  };
   
     render() {
       return (
 
         this.display
-        // <button onClick={this.handleClick}>
+        // <button onClick={this.handleClickMeasure}>
         //   {this.state.selected ? 'Selected' : 'Not'}
         // </button>
       );
