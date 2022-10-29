@@ -8,6 +8,7 @@ class MeasureTab extends React.Component{
     constructor(props) {
 
       super(props);
+      this.measureRef = React.createRef();
 
       this.state = {
           selected: false,
@@ -16,6 +17,8 @@ class MeasureTab extends React.Component{
           timeSig: props.timeSig,
           num: props.allMeasures.length
         };
+
+        console.log('NUM IN STATE: ', this.state.num);
 
       this.calculateTimeLeft = this.calculateTimeLeft.bind(this);  
       this.handleClickMeasure = this.handleClickMeasure.bind(this);
@@ -125,51 +128,43 @@ class MeasureTab extends React.Component{
       this.setState(prevState => ({
         selected: !prevState.selected
       }));
-      // const newState = this.state;
-      // newState.selected = !newState.selected;
-      // this.state = newState;
 
-      // function isFirstClick(currentThis){
-      //   currentThis.setFirstClick(false);
-      //   currentThis.firstClick = false;
-      //   return {selected: true}
-      // }
+      this.props.setCurrentMeasure(this.state.num);
 
-      // const currentState = this.firstClick ? isFirstClick(this) : this.state;
-
-
-      // this.display = <div>{this.state.strings.map(el => {
-      //   return el.timeLeft;
-      // })}</div>
       console.log('selected: ', this.state.selected)
-      this.display = <div className={(()=>{
-        let isSelected = false;
-        this.state.strings.forEach((string, index) => {
-          console.log(index, string)
-          if(string.selected === true) isSelected = true;
-        });
-        return isSelected;
-      })() ? 'selected-measure' : 'unselected-measure'} onClick={this.handleClickMeasure}>
+      let isSelected = false;
+
+      this.display = <div className={'unselected-measure'} onClick={this.handleClickMeasure}>
       {this.state.strings.map((string, index) => {
 
       if(string.note === undefined) return;
 
-      return <div  key={string.number} className={`${index === 0 ? 'string top' : 'string'} ${string.selected ? 'selectedString' : null}`} onClick={this.handleClickString}>{string.note}</div>
+      return <div  key={string.number} className={`${index === 0 ? 'string top' : 'string'} ${string.selected ? ' selectedString' : null}`}  onClick={this.handleClickString}>{string.note}</div>
     })}</div>
-    this.keyboardController(this.state.selected)
+
+    this.keyboardController(this.state.selected);
+
     if(!this.state.selected) window.removeEventListener('keydown', ()=>{console.log('removed')}, false)
     
-    console.log('measure')
   };
   
     render() {
-      return (
+      // ref={(el) => (this.props.measureRefs.current[this.props.measureRefs.current.length] = el)}
+      return (<div className={'unselected-measure'} onClick={this.handleClickMeasure}>
+        {this.state.strings.map((string, index) => {
 
-        this.display
+if(string.note === undefined) return;
+
+// console.log('here you idiot: ', this.props.measureRefs)
+// console.log('and then: ', this.props.measureRefs.current)
+
+return <div key={string.number} className={`${index === 0 ? 'string top' : 'string'} ${string.selected ? ' selectedString' : null}`}  onClick={this.handleClickString}>{string.note}</div>
+})}
+      </div>)
         // <button onClick={this.handleClickMeasure}>
         //   {this.state.selected ? 'Selected' : 'Not'}
         // </button>
-      );
+      ;
     };
   };
 

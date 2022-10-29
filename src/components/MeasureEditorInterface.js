@@ -12,10 +12,23 @@ import AddStringButton from './buttons/AddString';
 import RemoveStringButton from './buttons/RemoveString';
 import CreateSectionButton from './buttons/CreateSection';
 
-const MeasureEditorInterface = ({allMeasures, setAllMeasures}) => {
+const MeasureEditorInterface = ({measureRefs, allMeasures, setAllMeasures, strings, timeSig,
+    setCurrentMeasure, currentMeasure, setCurrentNoteInstance, currentNoteInstance, 
+    setCurrentPosition, currentPosition, setFirstClick, firstClick, MeasureTab}) => {
+        console.log('strings in interface: ', strings)
     return (<div className='interface'>
-        <AddMeasureButton allMeasures={allMeasures} setAllMeasures={setAllMeasures}/>
-        <DeleteMeasureButton />
+        <AddMeasureButton measureRefs={measureRefs} allMeasures={allMeasures} setAllMeasures = {setAllMeasures}
+    MeasureTab={MeasureTab} strings={strings} timeSig={timeSig}
+    setCurrentMeasure={setCurrentMeasure} currentMeasure={currentMeasure}
+    setCurrentNoteInstance={setCurrentNoteInstance} currentNoteInstance={currentNoteInstance}
+    setCurrentPosition={setCurrentPosition} currentPosition={currentPosition}
+    setFirstClick={setFirstClick} firstClick={firstClick}/>
+        <DeleteMeasureButton measureRefs={measureRefs} allMeasures={allMeasures} setAllMeasures = {setAllMeasures}
+    MeasureTab={MeasureTab} strings={strings} timeSig={timeSig}
+    setCurrentMeasure={setCurrentMeasure} currentMeasure={currentMeasure}
+    setCurrentNoteInstance={setCurrentNoteInstance} currentNoteInstance={currentNoteInstance}
+    setCurrentPosition={setCurrentPosition} currentPosition={currentPosition}
+    setFirstClick={setFirstClick} firstClick={firstClick}/>
         <NavToFirstButton />
         <NavBackSectionButton />
         <NavBackFiveButton />

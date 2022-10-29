@@ -1,12 +1,22 @@
-.selected-measure{
-    background-color: blue;
+  .measure-carousel{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .selected-measure{
     padding-top: 10px;
-    padding-left: 10px;
-    width: 0.1vw;
+    /* padding-left: 10.1vw; */
   }
   
   .unselected-measure{
     padding-top: 10px;
-    padding-left: 10px;
-    width: 0.1vw;
+  }
+
+  .selected-measure > div {
+    width: 11vw;
+    height: 44px;
+    margin-left: 3px;
+    margin-right: 3px;
   }
